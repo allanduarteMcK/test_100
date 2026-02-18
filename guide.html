@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What is GitHub? — A visual guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #faf8f5;
+      --bg-alt: #f0ebe3;
+      --ink: #1a1814;
+      --ink-soft: #4a4540;
+      --ink-muted: #7a756e;
+      --accent: #c45c26;
+      --accent-soft: rgba(196, 92, 38, 0.12);
+      --card: #fff;
+      --border: #e8e4dc;
+      --font-serif: 'Libre Baskerville', Georgia, serif;
+      --font-sans: 'Figtree', system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .nav-bar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(250, 248, 245, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+    }
+
+    .nav-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-bar a {
+      color: var(--ink-soft);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .nav-bar a:hover { color: var(--accent); }
+
+    .guide {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    .guide h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2.2rem, 5vw, 3rem);
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .guide .lead {
+      font-size: 1.2rem;
+      color: var(--ink-soft);
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .guide h2 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--ink);
+      margin: 56px 0 20px;
+      padding-top: 8px;
+    }
+
+    .guide h2:first-of-type { margin-top: 0; }
+
+    .guide p {
+      color: var(--ink-soft);
+      margin-bottom: 1.25em;
+      font-size: 1.05rem;
+    }
+
+    .pullquote {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-style: italic;
+      color: var(--ink);
+      border-left: 4px solid var(--accent);
+      padding: 20px 0 20px 24px;
+      margin: 32px 0;
+      background: var(--accent-soft);
+      padding-left: 24px;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 28px 0;
+    }
+
+    .concept-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .concept-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+
+    .concept-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .concept-card p {
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .workflow {
+      background: var(--bg-alt);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin: 32px 0;
+      border: 1px solid var(--border);
+    }
+
+    .workflow ol {
+      margin: 0;
+      padding-left: 1.4em;
+      color: var(--ink-soft);
+    }
+
+    .workflow li {
+      margin-bottom: 12px;
+      font-size: 1.05rem;
+    }
+
+    .workflow li strong { color: var(--ink); }
+
+    .glossary {
+      margin-top: 48px;
+    }
+
+    .glossary dt {
+      font-weight: 600;
+      color: var(--ink);
+      margin-top: 20px;
+      margin-bottom: 4px;
+    }
+
+    .glossary dd {
+      color: var(--ink-muted);
+      margin-left: 0;
+      padding-left: 0;
+      font-size: 0.95rem;
+    }
+
+    .footer-note {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: var(--ink-muted);
+    }
+
+    .footer-note a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .footer-note a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <a href="index.html">← GitHub Quest</a>
+      <a href="https://github.com" target="_blank" rel="noopener">Go to GitHub</a>
+    </div>
+  </nav>
+
+  <article class="guide">
+    <h1>What is GitHub?</h1>
+    <p class="lead">A short, visual guide to the platform that powers how millions of developers build and ship software together.</p>
+
+    <h2>Git vs GitHub</h2>
+    <p><strong>Git</strong> is a version-control system created by Linus Torvalds. It runs on your computer and tracks changes in your project over time: who changed what, when, and why. You can rewind, branch, and merge history without losing work.</p>
+    <p><strong>GitHub</strong> is a company and a website built on top of Git. It hosts your Git repositories in the cloud, adds a web interface, and adds collaboration features: pull requests, issues, code review, Actions, and more. Think of Git as the engine; GitHub is the place where people use that engine together.</p>
+
+    <div class="pullquote">
+      Git is the tool. GitHub is where the world builds with it.
+    </div>
+
+    <h2>Key concepts</h2>
+    <p>These ideas show up everywhere once you start using GitHub.</p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h3>Repository</h3>
+        <p>A project folder that Git tracks. It contains your files and the full history of changes. Can be local (on your machine) or remote (on GitHub).</p>
+      </div>
+      <div class="concept-card">
+        <h3>Commit</h3>
+        <p>A saved snapshot of your project at a point in time. Each commit has a message, an author, and a unique ID. History is a chain of commits.</p>
+      </div>
+      <div class="concept-card">
+        <h3>Branch</h3>
+        <p>A parallel line of work. You branch off from <code>main</code> to try an idea, then merge back when it’s ready. Keeps main stable.</p>
+      </div>
+      <div class="concept-card">
+        <h3>Pull request</h3>
+        <p>A request to merge your branch into another (often <code>main</code>). Lets others review your code and discuss before anything is merged.</p>
+      </div>
+      <div class="concept-card">
+        <h3>Fork</h3>
+        <p>Your own copy of someone else’s repo on GitHub. You can change your fork and then open a pull request back to the original project.</p>
+      </div>
+      <div class="concept-card">
+        <h3>Clone</h3>
+        <p>Downloading a repository from GitHub (or another remote) to your computer so you have a full local copy and can work offline.</p>
+      </div>
+    </div>
+
+    <h2>A simple workflow</h2>
+    <p>This is the loop most teams use every day.</p>
+
+    <div class="workflow">
+      <ol>
+        <li><strong>Clone</strong> the repo (or pull the latest changes if you already have it).</li>
+        <li><strong>Create a branch</strong> for your feature or fix (e.g. <code>feature/login-form</code>).</li>
+        <li><strong>Make changes</strong> and <strong>commit</strong> them with clear messages.</li>
+        <li><strong>Push</strong> your branch to GitHub.</li>
+        <li>Open a <strong>pull request</strong> into <code>main</code> and get review.</li>
+        <li>After approval, <strong>merge</strong> the PR. Your changes are now in <code>main</code>.</li>
+      </ol>
+    </div>
+
+    <h2>Why it matters</h2>
+    <p>GitHub is where open source lives: Linux, React, VS Code, and countless libraries are developed there. It’s also where many companies keep their private code and run their CI/CD. Learning Git and GitHub is learning how modern software is built and shipped.</p>
+
+    <section class="glossary">
+      <h2>Quick glossary</h2>
+      <dl>
+        <dt>main / master</dt>
+        <dd>The default branch name in a repo. Often where “production-ready” code lives.</dd>
+        <dt>merge</dt>
+        <dd>Combining two branches so that one branch’s commits become part of another.</dd>
+        <dt>push / pull</dt>
+        <dd>Push = send your commits to a remote (e.g. GitHub). Pull = fetch and merge changes from the remote into your current branch.</dd>
+        <dt>staging</dt>
+        <dd>Marking changes to be included in the next commit (e.g. <code>git add</code>).</dd>
+        <dt>remote</dt>
+        <dd>A version of the repo hosted elsewhere (e.g. <code>origin</code> on GitHub).</dd>
+      </dl>
+    </section>
+
+    <p class="footer-note">
+      Want to learn by doing? <a href="index.html">GitHub Quest</a> curates the best video tutorials so you can watch and practice in one place.
+    </p>
+  </article>
+</body>
+</html>
