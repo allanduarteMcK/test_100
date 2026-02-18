@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Quest — Level Up with the Best Tutorials</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0b;
+      --bg-card: #121214;
+      --bg-card-hover: #18181b;
+      --surface: #1c1c1f;
+      --border: rgba(255,255,255,0.06);
+      --text: #fafafa;
+      --text-muted: #a1a1aa;
+      --accent: #22c55e;
+      --accent-dim: rgba(34, 197, 94, 0.15);
+      --accent-glow: rgba(34, 197, 94, 0.25);
+      --gold: #eab308;
+      --gold-dim: rgba(234, 179, 8, 0.12);
+      --danger: #ef4444;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --font: 'Outfit', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Noise overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .app {
+      position: relative;
+      z-index: 0;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 20px 80px;
+    }
+
+    /* Header + progress */
+    header {
+      padding: 32px 0 40px;
+      animation: fadeUp 0.8s ease-out;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--accent) 0%, #16a34a 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+
+    .logo-text {
+      font-weight: 800;
+      font-size: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-text span { color: var(--accent); }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 400;
+      margin-top: 6px;
+      max-width: 480px;
+    }
+
+    /* Progress card — Robinhood-style */
+    .progress-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-top: 28px;
+      animation: fadeUp 0.8s ease-out 0.15s both;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .progress-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .progress-stats {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .xp-badge {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-dim);
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+
+    .xp-badge.streak {
+      color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .progress-bar-wrap {
+      height: 8px;
+      background: var(--surface);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: var(--progress-width, 0%);
+      background: linear-gradient(90deg, var(--accent), #4ade80);
+      border-radius: 999px;
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .level-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .level-row strong { color: var(--text); }
+
+    /* Section */
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 40px 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: fadeUp 0.8s ease-out 0.2s both;
+    }
+
+    .section-title .num {
+      width: 28px;
+      height: 28px;
+      background: var(--surface);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Quest cards — videos as stars */
+    .quest-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .quest-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      animation: fadeUp 0.6s ease-out both;
+    }
+
+    .quest-card:hover {
+      border-color: rgba(255,255,255,0.1);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    .quest-card.completed {
+      border-color: rgba(34, 197, 94, 0.3);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.2);
+    }
+
+    .quest-card.completed .quest-check { opacity: 1; background: var(--accent); border-color: var(--accent); }
+    .quest-card.completed .quest-check svg { opacity: 1; }
+
+    .quest-inner {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 0;
+      min-height: 220px;
+    }
+
+    @media (max-width: 900px) {
+      .quest-inner { grid-template-columns: 1fr; }
+    }
+
+    .quest-content {
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .quest-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .quest-check {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      flex-shrink: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      margin-top: 2px;
+    }
+
+    .quest-check:hover { border-color: var(--text-muted); }
+    .quest-check svg { opacity: 0; color: #fff; }
+
+    .quest-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+    }
+
+    .quest-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .quest-meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .quest-xp {
+      margin-top: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    .quest-video {
+      position: relative;
+      background: #000;
+      aspect-ratio: 16/9;
+      min-height: 220px;
+    }
+
+    @media (max-width: 900px) {
+      .quest-video { min-height: 200px; }
+    }
+
+    .quest-video iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .quest-video .play-badge {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(0,0,0,0.8);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .play-badge::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 5px solid var(--accent);
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+    }
+
+    /* Confetti (on complete) */
+    .confetti {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      animation: confetti-fall 2s ease-out forwards;
+    }
+
+    @keyframes confetti-fall {
+      to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    /* Stagger animation for cards */
+    .quest-card:nth-child(1) { animation-delay: 0.25s; }
+    .quest-card:nth-child(2) { animation-delay: 0.35s; }
+    .quest-card:nth-child(3) { animation-delay: 0.45s; }
+    .quest-card:nth-child(4) { animation-delay: 0.55s; }
+    .quest-card:nth-child(5) { animation-delay: 0.65s; }
+    .quest-card:nth-child(6) { animation-delay: 0.75s; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="logo-row">
+        <div class="logo-icon">⚡</div>
+        <div class="logo-text">GitHub <span>Quest</span></div>
+      </div>
+      <p class="subtitle">Master Git & GitHub with the best YouTube tutorials. Complete quests, earn XP, and level up.</p>
+
+      <div class="progress-card">
+        <div class="progress-top">
+          <span class="progress-label">Your progress</span>
+          <div class="progress-stats">
+          <span class="xp-badge" id="xpDisplay">0 XP</span>
+          <span class="xp-badge streak" id="streakDisplay">🔥 0 streak</span>
+        </div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="level-row">
+          <span>Level <strong id="levelNum">1</strong></span>
+          <span id="nextLevel">Complete 1 quest → Level 2</span>
+        </div>
+      </div>
+    </header>
+
+    <h2 class="section-title">
+      <span class="num">1</span>
+      Pick your quest — the best GitHub videos
+    </h2>
+
+    <div class="quest-list" id="questList">
+      <div class="quest-card" data-quest="1" data-xp="100">
+        <div class="quest-inner">
+          <div class="quest-content">
+            <div class="quest-header">
+              <button type="button" class="quest-check" aria-label="Mark complete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></button>
+              <h3 class="quest-title">Git & GitHub Crash Course — freeCodeCamp</h3>
+            </div>
+            <p class="quest-meta">
+              <span>freeCodeCamp</span>
+              <span>~1h 8m</span>
+              <span>4.9M+ views</span>
+            </p>
+            <p class="quest-xp">+100 XP when complete</p>
+          </div>
+          <div class="quest-video">
+            <iframe src="https://www.youtube.com/embed/RGOj5yH7evk?rel=0" title="Git and GitHub Crash Course" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <span class="play-badge">Watch</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="quest-card" data-quest="2" data-xp="120">
+        <div class="quest-inner">
+          <div class="quest-content">
+            <div class="quest-header">
+              <button type="button" class="quest-check" aria-label="Mark complete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></button>
+              <h3 class="quest-title">Git & GitHub Crash Course For Beginners [2024]</h3>
+            </div>
+            <p class="quest-meta">
+              <span>Complete tutorial</span>
+              <span>~2h</span>
+              <span>CLI + GitHub UI</span>
+            </p>
+            <p class="quest-xp">+120 XP when complete</p>
+          </div>
+          <div class="quest-video">
+            <iframe src="https://www.youtube.com/embed/l2yrJtwoC_E?rel=0" title="Git and GitHub Crash Course 2024" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <span class="play-badge">Watch</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="quest-card" data-quest="3" data-xp="80">
+        <div class="quest-inner">
+          <div class="quest-content">
+            <div class="quest-header">
+              <button type="button" class="quest-check" aria-label="Mark complete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></button>
+              <h3 class="quest-title">The Ultimate Beginner's Guide to GitHub [2025]</h3>
+            </div>
+            <p class="quest-meta">
+              <span>Foundations + profile tips</span>
+              <span>~50m</span>
+              <span>Chapters included</span>
+            </p>
+            <p class="quest-xp">+80 XP when complete</p>
+          </div>
+          <div class="quest-video">
+            <iframe src="https://www.youtube.com/embed/NUELGzIHT-I?rel=0" title="Ultimate GitHub Beginner Guide 2025" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <span class="play-badge">Watch</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="quest-card" data-quest="4" data-xp="150">
+        <div class="quest-inner">
+          <div class="quest-content">
+            <div class="quest-header">
+              <button type="button" class="quest-check" aria-label="Mark complete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></button>
+              <h3 class="quest-title">GitHub Foundations Certification — Pass in 10 Hours</h3>
+            </div>
+            <p class="quest-meta">
+              <span>Certification prep</span>
+              <span>~10h course</span>
+              <span>Exam-ready</span>
+            </p>
+            <p class="quest-xp">+150 XP when complete</p>
+          </div>
+          <div class="quest-video">
+            <iframe src="https://www.youtube.com/embed/Jdc0i7RcBv8?rel=0" title="GitHub Foundations Certification" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <span class="play-badge">Watch</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="quest-card" data-quest="5" data-xp="90">
+        <div class="quest-inner">
+          <div class="quest-content">
+            <div class="quest-header">
+              <button type="button" class="quest-check" aria-label="Mark complete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></button>
+              <h3 class="quest-title">Git & GitHub Crash Course 2025 — Traversy Media</h3>
+            </div>
+            <p class="quest-meta">
+              <span>Brad Traversy</span>
+              <span>~49m</span>
+              <span>Hands-on</span>
+            </p>
+            <p class="quest-xp">+90 XP when complete</p>
+          </div>
+          <div class="quest-video">
+            <iframe src="https://www.youtube.com/embed/vA5TTz6BXhY?rel=0" title="Git and GitHub Crash Course 2025" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <span class="play-badge">Watch</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="quest-card" data-quest="6" data-xp="60">
+        <div class="quest-inner">
+          <div class="quest-content">
+            <div class="quest-header">
+              <button type="button" class="quest-check" aria-label="Mark complete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></button>
+              <h3 class="quest-title">GitHub for Beginners — Quick Start</h3>
+            </div>
+            <p class="quest-meta">
+              <span>GitHub</span>
+              <span>Short intro</span>
+              <span>Copilot included</span>
+            </p>
+            <p class="quest-xp">+60 XP when complete</p>
+          </div>
+          <div class="quest-video">
+            <iframe src="https://www.youtube.com/embed/25zuoVxzZo0?rel=0" title="GitHub for Beginners Quick Start" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <span class="play-badge">Watch</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <script>
+    const STORAGE_KEY = 'github-quest-progress';
+    const XP_PER_LEVEL = 200;
+    const MAX_LEVEL = 10;
+
+    let completed = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+    function totalXP() {
+      return Array.from(document.querySelectorAll('.quest-card.completed'))
+        .reduce((sum, card) => sum + parseInt(card.dataset.xp || 0, 10), 0);
+    }
+
+    function levelFromXP(xp) {
+      return Math.min(MAX_LEVEL, Math.floor(xp / XP_PER_LEVEL) + 1);
+    }
+
+    function xpInCurrentLevel(xp) {
+      return xp % XP_PER_LEVEL;
+    }
+
+    function updateUI() {
+      const list = document.getElementById('questList');
+      list.querySelectorAll('.quest-card').forEach(card => {
+        const id = card.dataset.quest;
+        if (completed.has(id)) card.classList.add('completed');
+        else card.classList.remove('completed');
+      });
+
+      const xp = totalXP();
+      const level = levelFromXP(xp);
+      const inLevel = xpInCurrentLevel(xp);
+      const pct = Math.min(100, (inLevel / XP_PER_LEVEL) * 100);
+
+      document.getElementById('xpDisplay').textContent = xp + ' XP';
+      const completedCount = completed.size;
+      document.getElementById('streakDisplay').textContent = '🔥 ' + completedCount + ' quest' + (completedCount === 1 ? '' : 's') + ' done';
+      document.getElementById('levelNum').textContent = level;
+      document.getElementById('progressBar').style.setProperty('--progress-width', pct + '%');
+
+      const next = level >= MAX_LEVEL
+        ? 'Max level reached!'
+        : `Complete quests → Level ${level + 1}`;
+      document.getElementById('nextLevel').textContent = next;
+    }
+
+    function fireConfetti() {
+      const container = document.getElementById('confetti');
+      container.innerHTML = '';
+      const colors = ['#22c55e', '#4ade80', '#eab308', '#fafafa'];
+      for (let i = 0; i < 50; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.animationDelay = Math.random() * 0.5 + 's';
+        el.style.animationDuration = (1.5 + Math.random()) + 's';
+        container.appendChild(el);
+      }
+      setTimeout(() => { container.innerHTML = ''; }, 2500);
+    }
+
+    document.getElementById('questList').addEventListener('click', (e) => {
+      const check = e.target.closest('.quest-check');
+      if (!check) return;
+      const card = check.closest('.quest-card');
+      const id = card.dataset.quest;
+      const wasNew = !completed.has(id);
+      if (completed.has(id)) {
+        completed.delete(id);
+      } else {
+        completed.add(id);
+        if (wasNew) fireConfetti();
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([...completed]));
+      updateUI();
+    });
+
+    updateUI();
+  </script>
+</body>
+</html>
